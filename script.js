@@ -350,10 +350,10 @@ function renderOutsideTable() {
             <div class="mobile-record-bottom">
               <span class="badge expense">${item.from}</span>
               <span class="money expense">${money(Number(item.value || 0))}</span>
-              <span class="mobile-note">${item.note || 'Sem obs.'}</span>
               <div class="row-actions compact">
                 <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${String(item.id)}">Excluir</button>
               </div>
+              <span class="mobile-note">${item.note || 'Sem obs.'}</span>
             </div>
           </div>
         </td>
@@ -396,11 +396,11 @@ function renderTable() {
           <div class="mobile-record-bottom">
             <span class="badge expense">${entry.payer}</span>
             <span class="money expense">${money(entry.value)}</span>
-            <span class="mobile-note">${entry.note || 'Sem obs.'}</span>
             <div class="row-actions compact">
               <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
               <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
             </div>
+            <span class="mobile-note">${entry.note || 'Sem obs.'}</span>
           </div>
         </div>
       </td>
