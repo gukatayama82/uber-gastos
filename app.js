@@ -46,8 +46,6 @@ const inputPh = document.getElementById('ph-value');
 const inputPatricio = document.getElementById('patricio-value');
 const inputNote = document.getElementById('note');
 const entryIdInput = document.getElementById('entry-id');
-const exportButton = document.getElementById('export-json');
-const importInput = document.getElementById('import-json');
 const cancelEditButton = document.getElementById('cancel-edit');
 const outsideForm = document.getElementById('outside-form');
 const outsideTableBody = document.getElementById('outside-table-body');
@@ -73,27 +71,6 @@ function loadEntries() {
   }
 
   return [...seedData];
-}
-
-async function loadEntriesFromJson() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    return;
-  }
-
-  try {
-    const response = await fetch('./data.json');
-    if (!response.ok) return;
-
-    const data = await response.json();
-    if (Array.isArray(data) && data.length) {
-      state.entries = data;
-      persistEntries();
-      render();
-    }
-  } catch (error) {
-    console.warn('Não foi possível carregar data.json, usando seed local.', error);
-  }
 }
 
 function persistEntries() {
@@ -452,64 +429,6 @@ function handleFilters() {
   renderTable();
 }
 
-function exportJson() {
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    people: PEOPLE,
-    entries: state.entries,
-    outside: state.outside
-  };
-
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'data.json';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function importJson(event) {
-  const [file] = event.target.files || [];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const data = JSON.parse(reader.result);
-      const entries = Array.isArray(data) ? data : (Array.isArray(data.entries) ? data.entries : null);
-      const outside = Array.isArray(data.outside) ? data.outside : [];
-
-      if (!entries) {
-        alert('JSON inválido. Use um arquivo com a lista de despesas ou a propriedade entries.');
-        return;
-      }
-
-      state.entries = entries.map((entry, index) => ({
-        id: Number(entry.id) || Date.now() + index,
-        date: entry.date || new Date().toISOString().slice(0, 10),
-        payer: PEOPLE.includes(entry.payer) ? entry.payer : 'Gu',
-        description: String(entry.description || 'Despesa'),
-        category: String(entry.category || 'Geral'),
-        value: Number(entry.value || 0),
-        note: entry.note || ''
-      }));
-
-      state.outside = outside;
-      persistEntries();
-      persistOutside();
-      render();
-      alert('Arquivo JSON importado com sucesso.');
-    } catch (error) {
-      alert('Não foi possível ler esse arquivo JSON.');
-    } finally {
-      event.target.value = '';
-    }
-  };
-
-  reader.readAsText(file);
-}
-
 function render() {
   renderSummary();
   renderCategoryList();
@@ -532,9 +451,8 @@ outsideTableBody.addEventListener('click', (event) => {
 searchInput.addEventListener('input', handleFilters);
 payerFilter.addEventListener('change', handleFilters);
 monthFilter.addEventListener('change', handleFilters);
-exportButton.addEventListener('click', exportJson);
-importInput.addEventListener('change', importJson);
-cancelEditButton.addEventListener('click', resetForm);outsideCancelButton.addEventListener('click', resetOutsideForm);
+cancelEditButton.addEventListener('click', resetForm);
+outsideCancelButton.addEventListener('click', resetOutsideForm);
 
 inputDate.value = new Date().toISOString().slice(0, 10);
 outsideDate.value = new Date().toISOString().slice(0, 10);
@@ -542,4 +460,3 @@ inputPayer.value = 'Gu';
 outsideFrom.value = 'Gu';
 outsideTo.value = 'PH';
 render();
-loadEntriesFromJson();
