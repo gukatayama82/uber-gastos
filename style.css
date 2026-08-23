@@ -436,22 +436,92 @@ th {
 }
 
 @media (max-width: 640px) {
+  body {
+    min-width: 320px;
+  }
+
   .main-content {
-    padding: 18px;
+    padding: 16px 14px 24px;
+  }
+
+  .sidebar {
+    padding: 18px 14px;
+  }
+
+  .brand {
+    margin-bottom: 18px;
+  }
+
+  .nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nav-item {
+    text-align: center;
+    padding: 10px 12px;
   }
 
   .summary-grid,
   .panel-grid,
   .people-summary,
-  .two-col {
+  .two-col,
+  .four-col,
+  .three-col {
     grid-template-columns: 1fr;
   }
 
+  .summary-card,
+  .person-card,
+  .panel {
+    padding: 16px 14px;
+  }
+
   .topbar,
+  .panel-header,
   .table-header,
   .filters,
-  .actions {
+  .actions,
+  .form-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .topbar h2 {
+    font-size: 1.35rem;
+  }
+
+  .ghost,
+  .primary,
+  .secondary {
+    width: 100%;
+  }
+
+  .file-button {
+    width: 100%;
+  }
+
+  .table-wrap {
+    margin-top: 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 620px;
+  }
+
+  th,
+  td {
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .row-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .icon-btn {
+    width: 100%;
   }
 }
