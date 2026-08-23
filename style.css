@@ -619,6 +619,7 @@ th {
     color: var(--muted);
     font-weight: 600;
     white-space: nowrap;
+    flex: 0 0 auto;
   }
 
   .mobile-title {
@@ -627,13 +628,14 @@ th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 42%;
+    max-width: 40%;
   }
 
   .mobile-category {
     color: var(--muted);
     font-size: 10px;
     margin-left: auto;
+    text-align: right;
   }
 
   .mobile-note {

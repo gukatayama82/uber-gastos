@@ -338,7 +338,7 @@ function renderTable() {
           <div class="mobile-record-bottom">
             <span class="badge expense">${entry.payer}</span>
             <span class="money expense">${money(entry.value)}</span>
-            <span class="mobile-note">${entry.note || '—'}</span>
+            <span class="mobile-note">${entry.note || 'Sem obs.'}</span>
             <div class="row-actions compact">
               <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
               <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
