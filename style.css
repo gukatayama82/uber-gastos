@@ -613,6 +613,7 @@ th {
     grid-template-columns: auto auto minmax(0, 1fr) auto;
     color: var(--muted);
     font-size: 10.5px;
+    min-width: 0;
   }
 
   .mobile-date,
@@ -634,11 +635,15 @@ th {
     color: var(--muted);
     min-width: 0;
     overflow-wrap: anywhere;
+    word-break: break-word;
     white-space: normal;
+    display: block;
+    grid-column: 1 / -1;
   }
 
   .mobile-record-bottom .row-actions.compact {
     justify-self: end;
+    grid-column: 4;
   }
 
   .row-actions {
