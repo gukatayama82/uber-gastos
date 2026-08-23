@@ -576,7 +576,7 @@ th {
   .mobile-row {
     display: block;
     width: 100%;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
   .mobile-row td {
@@ -587,12 +587,13 @@ th {
   }
 
   .mobile-record {
-    background: #f8faff;
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 10px 10px 8px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7faff 100%);
+    border: 1px solid #dfe8ff;
+    border-radius: 14px;
+    padding: 12px 12px 10px;
     display: grid;
     gap: 8px;
+    box-shadow: 0 6px 18px rgba(39, 52, 81, 0.06);
   }
 
   .mobile-record-top,
@@ -628,7 +629,7 @@ th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 40%;
+    max-width: 46%;
   }
 
   .mobile-category {
@@ -643,7 +644,7 @@ th {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 28%;
+    max-width: 30%;
   }
 
   .mobile-record-bottom .row-actions.compact {
