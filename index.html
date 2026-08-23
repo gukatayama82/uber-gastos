@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>Teste Pagina Uber Gastos</title>
-    <link rel="stylesheet" href="style.css?v=20260823-1" />
+    <link rel="stylesheet" href="style.css?v=20260823-2" />
   </head>
   <body>
     <div class="app-shell">
@@ -78,7 +78,6 @@
         <section class="panel-grid">
           <article class="panel form-panel mobile-accordion" id="entry-form-panel">
             <div class="panel-header accordion-header">
-              <button class="accordion-toggle" type="button" data-target="entry-form-panel" aria-expanded="false">Adicionar despesa</button>
             </div>
 
             <div class="accordion-body">
@@ -157,50 +156,52 @@
           </div>
 
           <div class="accordion-body">
-            <form id="outside-form">
-              <div class="field-grid four-col">
-                <label>
-                  <span>Data</span>
-                  <input id="outside-date" type="date" required />
-                </label>
-                <label>
-                  <span>Quem pagou</span>
-                  <select id="outside-from" required>
-                    <option value="Gu">Gu</option>
-                    <option value="PH">PH</option>
-                    <option value="Patrício">Patrício</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Para quem</span>
-                  <select id="outside-to" required>
-                    <option value="Gu">Gu</option>
-                    <option value="PH">PH</option>
-                    <option value="Patrício">Patrício</option>
-                  </select>
-                </label>
-                <label>
-                  <span>Valor</span>
-                  <input id="outside-value" type="number" step="0.01" min="0" placeholder="0,00" required />
-                </label>
-              </div>
+            <div class="inside-card">
+              <form id="outside-form">
+                <div class="field-grid four-col">
+                  <label>
+                    <span>Data</span>
+                    <input id="outside-date" type="date" required />
+                  </label>
+                  <label>
+                    <span>Quem pagou</span>
+                    <select id="outside-from" required>
+                      <option value="Gu">Gu</option>
+                      <option value="PH">PH</option>
+                      <option value="Patrício">Patrício</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Para quem</span>
+                    <select id="outside-to" required>
+                      <option value="Gu">Gu</option>
+                      <option value="PH">PH</option>
+                      <option value="Patrício">Patrício</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Valor</span>
+                    <input id="outside-value" type="number" step="0.01" min="0" placeholder="0,00" required />
+                  </label>
+                </div>
 
-              <div class="field-grid two-col">
-                <label>
-                  <span>Descrição</span>
-                  <input id="outside-description" type="text" maxlength="80" placeholder="Ex.: Reembolso, ajuste, amigo" required />
-                </label>
-                <label>
-                  <span>Observação</span>
-                  <input id="outside-note" type="text" maxlength="120" placeholder="Opcional" />
-                </label>
-              </div>
+                <div class="field-grid two-col">
+                  <label>
+                    <span>Descrição</span>
+                    <input id="outside-description" type="text" maxlength="80" placeholder="Ex.: Reembolso, ajuste, amigo" required />
+                  </label>
+                  <label>
+                    <span>Observação</span>
+                    <input id="outside-note" type="text" maxlength="120" placeholder="Opcional" />
+                  </label>
+                </div>
 
-              <div class="form-actions">
-                <button class="primary" type="submit">Salvar ajuste fora</button>
-                <button class="secondary" id="outside-cancel" type="button">Limpar</button>
-              </div>
-            </form>
+                <div class="form-actions">
+                  <button class="primary" type="submit">Salvar ajuste fora</button>
+                  <button class="secondary" id="outside-cancel" type="button">Limpar</button>
+                </div>
+              </form>
+            </div>
           </div>
 
           <div class="table-wrap small-table">
@@ -222,10 +223,9 @@
         </section>
 
         <section class="panel table-panel">
-          <div id="mobile-expense-slot"></div>
-
-          <div class="panel-header table-header">
+          <div class="panel-header table-header accordion-header">
             <h3>Controle de despesas</h3>
+            <button class="accordion-toggle" type="button" data-target="entry-form-panel" aria-expanded="false">Nova despesa</button>
           </div>
 
           <div class="filters" style="margin-top: 12px; margin-bottom: 12px;">
@@ -260,6 +260,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=20260823-1"></script>
+    <script src="script.js?v=20260823-2"></script>
   </body>
 </html>

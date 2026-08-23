@@ -715,7 +715,6 @@ function initializeApp() {
   function syncAccordionState() {
     const isMobile = window.matchMedia('(max-width: 640px)').matches;
     const formPanel = document.querySelector('.form-panel');
-    const mobileSlot = document.getElementById('mobile-expense-slot');
     const tablePanel = document.querySelector('.table-panel');
     const tableWrap = tablePanel?.querySelector('.table-wrap');
 
@@ -733,28 +732,43 @@ function initializeApp() {
         tablePanel.insertBefore(formPanel, tableWrap);
       }
     }
+    // Garantir que não exista um toggle visível dentro do painel do formulário
+    // (evita botão duplicado sendo exibido no modo mobile)
+    if (formPanel) {
+      const innerToggle = formPanel.querySelector('.panel-header .accordion-toggle');
+      if (innerToggle) innerToggle.remove();
+    }
 
     document.querySelectorAll('.mobile-accordion').forEach((panel) => {
       const button = panel.querySelector('.accordion-toggle');
       const body = panel.querySelector('.accordion-body');
       if (!button || !body) return;
 
+      const visibleButton = panel.id === 'entry-form-panel'
+        ? document.querySelector('.table-panel .accordion-toggle')
+        : button;
+
       if (!isMobile) {
         panel.classList.add('is-open');
         body.style.display = 'block';
-        button.setAttribute('aria-expanded', 'true');
-        button.textContent = panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro';
+        if (visibleButton) {
+          visibleButton.setAttribute('aria-expanded', 'true');
+          visibleButton.textContent = panel.id === 'entry-form-panel' ? 'Nova despesa' : 'Novo registro';
+        }
         return;
       }
 
       panel.classList.remove('is-open');
       body.style.display = 'none';
-      button.setAttribute('aria-expanded', 'false');
-      button.textContent = panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro';
+      if (visibleButton) {
+        visibleButton.setAttribute('aria-expanded', 'false');
+        visibleButton.textContent = panel.id === 'entry-form-panel' ? 'Nova despesa' : 'Novo registro';
+      }
     });
   }
 
   document.querySelectorAll('.accordion-toggle').forEach((button) => {
+    if (button.closest('#mobile-expense-slot')) return;
     button.addEventListener('click', () => {
       const panel = document.getElementById(button.dataset.target);
       if (!panel) return;
@@ -764,7 +778,13 @@ function initializeApp() {
       const body = panel.querySelector('.accordion-body');
       if (body) body.style.display = isOpen ? 'block' : 'none';
       button.setAttribute('aria-expanded', String(isOpen));
-      button.textContent = isOpen ? (panel.id === 'entry-form-panel' ? 'Fechar' : 'Fechar') : (panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro');
+      button.textContent = isOpen ? 'Fechar' : (panel.id === 'entry-form-panel' ? 'Nova despesa' : 'Novo registro');
+
+      const tableToggle = document.querySelector('.table-panel .accordion-toggle');
+      if (tableToggle && button !== tableToggle) {
+        tableToggle.textContent = button.textContent;
+        tableToggle.setAttribute('aria-expanded', String(isOpen));
+      }
     });
   });
 

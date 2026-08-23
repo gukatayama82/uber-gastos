@@ -220,6 +220,25 @@ button {
   gap: 20px;
 }
 
+.inside-card {
+  background: #f8faff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 16px;
+  margin-top: 8px;
+}
+
+.table-panel > .panel-header.table-header {
+  margin-bottom: 8px;
+}
+
+.table-panel > .form-panel {
+  margin-top: 0;
+  background: #f8faff;
+  border: 1px solid var(--line);
+  box-shadow: none;
+}
+
 .people-panel {
   margin-top: 18px;
 }
@@ -363,9 +382,12 @@ input:focus, select:focus {
   border-radius: inherit;
 }
 
-.table-panel,
+.table-panel {
+  margin-top: 18px;
+}
+
 .outside-panel {
-  margin-top: 24px;
+  margin-top: 12px;
 }
 
 .table-wrap {
@@ -515,15 +537,29 @@ th {
     gap: 12px;
   }
 
-  .accordion-toggle {
-    display: inline-flex;
+  .mobile-accordion .accordion-toggle,
+  .table-panel .accordion-toggle,
+  .panel-header.table-header .accordion-toggle,
+  .panel-header.accordion-header .accordion-toggle {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
     border: 1px solid var(--line);
     background: #f4f7ff;
     color: var(--primary);
     border-radius: 999px;
-    padding: 6px 10px;
+    padding: 7px 12px;
     font-size: 11px;
     font-weight: 700;
+    line-height: 1.2;
+    min-height: 32px;
+    white-space: nowrap;
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .form-panel .accordion-toggle {
+    display: none !important;
   }
 
   .mobile-accordion .accordion-body {
@@ -561,9 +597,37 @@ th {
     display: none;
   }
 
+  #entry-form-panel {
+    display: none;
+  }
+
+  #entry-form-panel.is-open {
+    display: block;
+  }
+
+  #entry-form-panel.is-open .accordion-body {
+    display: block;
+  }
+
   #mobile-expense-slot {
     display: block;
     margin-top: 10px;
+  }
+
+  #mobile-expense-slot .accordion-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    background: #f4f7ff;
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    min-height: 32px;
+    white-space: nowrap;
   }
 
   .summary-card,
