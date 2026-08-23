@@ -122,6 +122,30 @@ button {
   gap: 12px;
 }
 
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f6f9ff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 8px 10px;
+}
+
+.desktop-new-entry-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 10px;
+  background: var(--primary);
+  color: white;
+  padding: 9px 14px;
+  font-weight: 700;
+  min-width: 120px;
+  box-shadow: 0 6px 18px rgba(55, 99, 255, 0.2);
+}
+
 .accordion-toggle {
   display: none;
 }
@@ -583,12 +607,25 @@ th {
     gap: 8px;
   }
 
+  .table-header-actions {
+    display: block;
+    width: 100%;
+  }
+
+  .desktop-new-entry-btn {
+    display: none;
+  }
+
   .topbar h2 {
     font-size: 1.1rem;
   }
 
   .filters {
     width: 100%;
+  }
+
+  .table-header-actions {
+    padding: 8px;
   }
 
   .filters input,

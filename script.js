@@ -711,22 +711,32 @@ function initializeApp() {
   safeBind(monthFilter, 'change', handleFilters);
   safeBind(cancelEditButton, 'click', resetForm);
   safeBind(outsideCancelButton, 'click', resetOutsideForm);
+  safeBind(document.getElementById('desktop-new-entry-btn'), 'click', () => {
+    const panel = document.getElementById('entry-form-panel');
+    const form = panel?.querySelector('#description');
+    if (panel) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (form) {
+      form.focus();
+    }
+  });
 
   function syncAccordionState() {
     const isMobile = window.matchMedia('(max-width: 640px)').matches;
     const formPanel = document.querySelector('.form-panel');
     const mobileSlot = document.getElementById('mobile-expense-slot');
+    const tablePanel = document.querySelector('.table-panel');
+    const tableWrap = tablePanel?.querySelector('.table-wrap');
 
-    if (formPanel && mobileSlot) {
-      if (isMobile && !mobileSlot.contains(formPanel)) {
+    if (formPanel) {
+      if (isMobile && mobileSlot && !mobileSlot.contains(formPanel)) {
         mobileSlot.appendChild(formPanel);
       }
 
-      if (!isMobile && mobileSlot.contains(formPanel)) {
-        const grid = document.querySelector('.panel-grid');
-        if (grid) {
-          const dashboardPanel = grid.querySelector('.dashboard-panel');
-          grid.insertBefore(formPanel, dashboardPanel || null);
+      if (!isMobile) {
+        if (tablePanel && !tablePanel.contains(formPanel)) {
+          tablePanel.insertBefore(formPanel, tableWrap || null);
         }
       }
     }
