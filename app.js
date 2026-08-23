@@ -285,12 +285,14 @@ function renderOutsideTable() {
         <td colspan="7">
           <div class="mobile-record">
             <div class="mobile-record-top">
+              <span class="mobile-date">${formatDate(item.date)}</span>
               <span class="mobile-title">${item.description}</span>
-              <span class="money expense">${money(Number(item.value || 0))}</span>
+              <span class="mobile-category">${item.from} → ${item.to}</span>
             </div>
             <div class="mobile-record-bottom">
-              <span>${formatDate(item.date)}</span>
-              <span>${item.from} → ${item.to}</span>
+              <span class="badge expense">${item.from}</span>
+              <span class="money expense">${money(Number(item.value || 0))}</span>
+              <span class="mobile-note">${item.note || '—'}</span>
               <div class="row-actions compact">
                 <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${item.id}">Excluir</button>
               </div>
@@ -329,13 +331,14 @@ function renderTable() {
       <td colspan="7">
         <div class="mobile-record">
           <div class="mobile-record-top">
+            <span class="mobile-date">${formatDate(entry.date)}</span>
             <span class="mobile-title">${entry.description}</span>
-            <span class="money expense">${money(entry.value)}</span>
+            <span class="mobile-category">${entry.category}</span>
           </div>
           <div class="mobile-record-bottom">
-            <span>${formatDate(entry.date)}</span>
-            <span>${entry.category}</span>
-            <span><span class="badge expense">${entry.payer}</span></span>
+            <span class="badge expense">${entry.payer}</span>
+            <span class="money expense">${money(entry.value)}</span>
+            <span class="mobile-note">${entry.note || '—'}</span>
             <div class="row-actions compact">
               <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
               <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>

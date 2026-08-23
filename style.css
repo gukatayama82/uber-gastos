@@ -599,24 +599,49 @@ th {
   .mobile-record-bottom {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
   }
 
-  .mobile-title {
-    font-weight: 700;
-    color: var(--text);
-    max-width: 70%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  .mobile-record-top {
+    justify-content: flex-start;
+    font-size: 10px;
+    color: var(--muted);
   }
 
   .mobile-record-bottom {
     color: var(--muted);
     font-size: 10.5px;
     justify-content: flex-start;
+  }
+
+  .mobile-date {
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .mobile-title {
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 42%;
+  }
+
+  .mobile-category {
+    color: var(--muted);
+    font-size: 10px;
+    margin-left: auto;
+  }
+
+  .mobile-note {
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 28%;
   }
 
   .mobile-record-bottom .row-actions.compact {
