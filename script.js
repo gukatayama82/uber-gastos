@@ -711,16 +711,6 @@ function initializeApp() {
   safeBind(monthFilter, 'change', handleFilters);
   safeBind(cancelEditButton, 'click', resetForm);
   safeBind(outsideCancelButton, 'click', resetOutsideForm);
-  safeBind(document.getElementById('desktop-new-entry-btn'), 'click', () => {
-    const panel = document.getElementById('entry-form-panel');
-    const form = panel?.querySelector('#description');
-    if (panel) {
-      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    if (form) {
-      form.focus();
-    }
-  });
 
   function syncAccordionState() {
     const isMobile = window.matchMedia('(max-width: 640px)').matches;
@@ -729,15 +719,18 @@ function initializeApp() {
     const tablePanel = document.querySelector('.table-panel');
     const tableWrap = tablePanel?.querySelector('.table-wrap');
 
-    if (formPanel) {
-      if (isMobile && mobileSlot && !mobileSlot.contains(formPanel)) {
-        mobileSlot.appendChild(formPanel);
-      }
+    if (formPanel && tablePanel) {
+      const header = tablePanel.querySelector('.panel-header.table-header');
+      const filters = tablePanel.querySelector('.filters');
+      const insertionTarget = filters || tableWrap || null;
 
-      if (!isMobile) {
-        if (tablePanel && !tablePanel.contains(formPanel)) {
-          tablePanel.insertBefore(formPanel, tableWrap || null);
+      if (header) {
+        const isAfterHeader = formPanel.previousElementSibling === header;
+        if (!tablePanel.contains(formPanel) || !isAfterHeader) {
+          tablePanel.insertBefore(formPanel, insertionTarget);
         }
+      } else if (!tablePanel.contains(formPanel) && tableWrap) {
+        tablePanel.insertBefore(formPanel, tableWrap);
       }
     }
 

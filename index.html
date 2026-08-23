@@ -66,12 +66,18 @@
             <h3>Resumo por pessoa</h3>
           </div>
           <div id="people-summary" class="people-summary"></div>
+
+          <article class="panel dashboard-panel compact-dashboard-panel">
+            <div class="panel-header">
+              <h3>Gastos por categoria</h3>
+            </div>
+            <div id="category-list" class="category-list"></div>
+          </article>
         </section>
 
         <section class="panel-grid">
           <article class="panel form-panel mobile-accordion" id="entry-form-panel">
             <div class="panel-header accordion-header">
-              <h3>Nova despesa</h3>
               <button class="accordion-toggle" type="button" data-target="entry-form-panel" aria-expanded="false">Adicionar despesa</button>
             </div>
 
@@ -142,12 +148,6 @@
             </div>
           </article>
 
-          <article class="panel dashboard-panel">
-            <div class="panel-header">
-              <h3>Gastos por categoria</h3>
-            </div>
-            <div id="category-list" class="category-list"></div>
-          </article>
         </section>
 
         <section class="panel outside-panel mobile-accordion" id="outside-form-panel">
@@ -222,24 +222,22 @@
         </section>
 
         <section class="panel table-panel">
+          <div id="mobile-expense-slot"></div>
+
           <div class="panel-header table-header">
-            <h3>Lista de despesas</h3>
-            <div class="table-header-actions">
-              <button class="desktop-new-entry-btn" id="desktop-new-entry-btn" type="button">Nova despesa</button>
-              <div class="filters">
-                <input id="search" type="search" placeholder="Buscar descrição ou categoria" />
-                <select id="filter-payer">
-                  <option value="all">Todos</option>
-                  <option value="Gu">Gu</option>
-                  <option value="PH">PH</option>
-                  <option value="Patrício">Patrício</option>
-                </select>
-                <input id="filter-month" type="month" />
-              </div>
-            </div>
+            <h3>Controle de despesas</h3>
           </div>
 
-          <div id="mobile-expense-slot"></div>
+          <div class="filters" style="margin-top: 12px; margin-bottom: 12px;">
+            <input id="search" type="search" placeholder="Buscar descrição ou categoria" />
+            <select id="filter-payer">
+              <option value="all">Todos</option>
+              <option value="Gu">Gu</option>
+              <option value="PH">PH</option>
+              <option value="Patrício">Patrício</option>
+            </select>
+            <input id="filter-month" type="month" />
+          </div>
 
           <div class="table-wrap">
             <table>
