@@ -522,6 +522,9 @@ async function handleTableClick(event) {
   }
 
   if (action === 'delete') {
+    const confirmed = window.confirm('Deseja excluir esta despesa?');
+    if (!confirmed) return;
+
     if (!appSupabase) return;
 
     try {
@@ -674,6 +677,9 @@ function initializeApp() {
     if (!button) return;
 
     const { id } = button.dataset;
+    const confirmed = window.confirm('Deseja excluir este ajuste fora do grupo?');
+    if (!confirmed) return;
+
     try {
       await deleteOutsideRecord(id);
       showStatus('Ajuste fora do grupo removido com sucesso.', 'success');
@@ -688,6 +694,16 @@ function initializeApp() {
   safeBind(monthFilter, 'change', handleFilters);
   safeBind(cancelEditButton, 'click', resetForm);
   safeBind(outsideCancelButton, 'click', resetOutsideForm);
+
+  document.querySelectorAll('.accordion-toggle').forEach((button) => {
+    button.addEventListener('click', () => {
+      const panel = document.getElementById(button.dataset.target);
+      if (!panel) return;
+      const isOpen = panel.classList.toggle('is-open');
+      button.setAttribute('aria-expanded', String(isOpen));
+      button.textContent = isOpen ? 'Fechar' : 'Abrir';
+    });
+  });
 
   if (inputDate) inputDate.value = new Date().toISOString().slice(0, 10);
   if (outsideDate) outsideDate.value = new Date().toISOString().slice(0, 10);
