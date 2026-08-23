@@ -429,7 +429,24 @@ function fillForm(entry) {
   inputCategory.value = entry.category;
   inputValue.value = entry.value;
   inputNote.value = entry.note || '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const panel = document.getElementById('entry-form-panel');
+  const button = panel?.querySelector('.accordion-toggle');
+  const body = panel?.querySelector('.accordion-body');
+
+  if (isMobile && panel && body && button) {
+    panel.classList.add('is-open');
+    body.style.display = 'block';
+    button.setAttribute('aria-expanded', 'true');
+    button.textContent = 'Fechar';
+    const target = panel.getBoundingClientRect().top + window.scrollY - 12;
+    window.scrollTo({ top: target, behavior: 'smooth' });
+    return;
+  }
+
+  const target = panel ? panel.getBoundingClientRect().top + window.scrollY - 12 : 0;
+  window.scrollTo({ top: target, behavior: 'smooth' });
 }
 
 async function loadRecords() {
@@ -695,15 +712,61 @@ function initializeApp() {
   safeBind(cancelEditButton, 'click', resetForm);
   safeBind(outsideCancelButton, 'click', resetOutsideForm);
 
+  function syncAccordionState() {
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    const formPanel = document.querySelector('.form-panel');
+    const mobileSlot = document.getElementById('mobile-expense-slot');
+
+    if (formPanel && mobileSlot) {
+      if (isMobile && !mobileSlot.contains(formPanel)) {
+        mobileSlot.appendChild(formPanel);
+      }
+
+      if (!isMobile && mobileSlot.contains(formPanel)) {
+        const grid = document.querySelector('.panel-grid');
+        if (grid) {
+          const dashboardPanel = grid.querySelector('.dashboard-panel');
+          grid.insertBefore(formPanel, dashboardPanel || null);
+        }
+      }
+    }
+
+    document.querySelectorAll('.mobile-accordion').forEach((panel) => {
+      const button = panel.querySelector('.accordion-toggle');
+      const body = panel.querySelector('.accordion-body');
+      if (!button || !body) return;
+
+      if (!isMobile) {
+        panel.classList.add('is-open');
+        body.style.display = 'block';
+        button.setAttribute('aria-expanded', 'true');
+        button.textContent = panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro';
+        return;
+      }
+
+      panel.classList.remove('is-open');
+      body.style.display = 'none';
+      button.setAttribute('aria-expanded', 'false');
+      button.textContent = panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro';
+    });
+  }
+
   document.querySelectorAll('.accordion-toggle').forEach((button) => {
     button.addEventListener('click', () => {
       const panel = document.getElementById(button.dataset.target);
       if (!panel) return;
+      const isMobile = window.matchMedia('(max-width: 640px)').matches;
+      if (!isMobile) return;
       const isOpen = panel.classList.toggle('is-open');
+      const body = panel.querySelector('.accordion-body');
+      if (body) body.style.display = isOpen ? 'block' : 'none';
       button.setAttribute('aria-expanded', String(isOpen));
-      button.textContent = isOpen ? 'Fechar' : 'Abrir';
+      button.textContent = isOpen ? (panel.id === 'entry-form-panel' ? 'Fechar' : 'Fechar') : (panel.id === 'entry-form-panel' ? 'Adicionar despesa' : 'Novo registro');
     });
   });
+
+  syncAccordionState();
+  window.addEventListener('resize', syncAccordionState);
 
   if (inputDate) inputDate.value = new Date().toISOString().slice(0, 10);
   if (outsideDate) outsideDate.value = new Date().toISOString().slice(0, 10);

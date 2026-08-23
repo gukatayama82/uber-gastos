@@ -122,6 +122,10 @@ button {
   gap: 12px;
 }
 
+.accordion-toggle {
+  display: none;
+}
+
 .eyebrow {
   margin: 0 0 6px;
   font-size: 12px;
@@ -503,6 +507,7 @@ th {
   }
 
   .accordion-toggle {
+    display: inline-flex;
     border: 1px solid var(--line);
     background: #f4f7ff;
     color: var(--primary);
@@ -512,16 +517,20 @@ th {
     font-weight: 700;
   }
 
-  .mobile-accordion:not(.is-open) .accordion-body {
+  .mobile-accordion .accordion-body {
     display: none;
   }
 
-  .mobile-accordion.is-open .accordion-toggle::after {
-    content: 'Fechar';
+  .mobile-accordion.is-open .accordion-body {
+    display: block;
   }
 
-  .mobile-accordion:not(.is-open) .accordion-toggle::after {
+  .mobile-accordion:not(.is-open) .accordion-toggle {
     content: 'Abrir';
+  }
+
+  .mobile-accordion.is-open .accordion-toggle {
+    content: 'Fechar';
   }
 
   .accordion-toggle::after {
@@ -537,6 +546,15 @@ th {
   .table-panel,
   .outside-panel {
     margin-top: 12px;
+  }
+
+  .panel-grid .form-panel {
+    display: none;
+  }
+
+  #mobile-expense-slot {
+    display: block;
+    margin-top: 10px;
   }
 
   .summary-card,

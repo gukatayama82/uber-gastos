@@ -69,10 +69,10 @@
         </section>
 
         <section class="panel-grid">
-          <article class="panel form-panel mobile-accordion is-open" id="entry-form-panel">
+          <article class="panel form-panel mobile-accordion" id="entry-form-panel">
             <div class="panel-header accordion-header">
               <h3>Nova despesa</h3>
-              <button class="accordion-toggle" type="button" data-target="entry-form-panel" aria-expanded="true">Fechar</button>
+              <button class="accordion-toggle" type="button" data-target="entry-form-panel" aria-expanded="false">Adicionar despesa</button>
             </div>
 
             <div class="accordion-body">
@@ -150,10 +150,10 @@
           </article>
         </section>
 
-        <section class="panel outside-panel mobile-accordion is-open" id="outside-form-panel">
+        <section class="panel outside-panel mobile-accordion" id="outside-form-panel">
           <div class="panel-header accordion-header">
             <h3>Controle fora do grupo</h3>
-            <button class="accordion-toggle" type="button" data-target="outside-form-panel" aria-expanded="true">Fechar</button>
+            <button class="accordion-toggle" type="button" data-target="outside-form-panel" aria-expanded="false">Novo registro</button>
           </div>
 
           <div class="accordion-body">
@@ -235,6 +235,8 @@
               <input id="filter-month" type="month" />
             </div>
           </div>
+
+          <div id="mobile-expense-slot"></div>
 
           <div class="table-wrap">
             <table>
