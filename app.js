@@ -268,16 +268,33 @@ function renderOutsideTable() {
     .slice()
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map((item) => `
-      <tr>
-        <td data-label="Data">${formatDate(item.date)}</td>
-        <td data-label="Quem pagou"><span class="badge expense">${item.from}</span></td>
-        <td data-label="Para quem"><span class="badge income">${item.to}</span></td>
-        <td data-label="Descrição">${item.description}</td>
-        <td class="money expense" data-label="Valor">${money(Number(item.value || 0))}</td>
-        <td data-label="Obs.">${item.note || '-'}</td>
-        <td data-label="Ações">
+      <tr class="desktop-row">
+        <td>${formatDate(item.date)}</td>
+        <td><span class="badge expense">${item.from}</span></td>
+        <td><span class="badge income">${item.to}</span></td>
+        <td>${item.description}</td>
+        <td class="money expense">${money(Number(item.value || 0))}</td>
+        <td>${item.note || '-'}</td>
+        <td>
           <div class="row-actions">
             <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${item.id}">Excluir</button>
+          </div>
+        </td>
+      </tr>
+      <tr class="mobile-row">
+        <td colspan="7">
+          <div class="mobile-record">
+            <div class="mobile-record-top">
+              <span class="mobile-title">${item.description}</span>
+              <span class="money expense">${money(Number(item.value || 0))}</span>
+            </div>
+            <div class="mobile-record-bottom">
+              <span>${formatDate(item.date)}</span>
+              <span>${item.from} → ${item.to}</span>
+              <div class="row-actions compact">
+                <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${item.id}">Excluir</button>
+              </div>
+            </div>
           </div>
         </td>
       </tr>
@@ -294,17 +311,36 @@ function renderTable() {
   }
 
   tableBody.innerHTML = entries.map((entry) => `
-    <tr>
-      <td data-label="Data">${formatDate(entry.date)}</td>
-      <td data-label="Descrição">${entry.description}</td>
-      <td data-label="Categoria">${entry.category}</td>
-      <td data-label="Pago por"><span class="badge expense">${entry.payer}</span></td>
-      <td class="money expense" data-label="Valor">${money(entry.value)}</td>
-      <td data-label="Obs.">${entry.note || '-'}</td>
-      <td data-label="Ações">
+    <tr class="desktop-row">
+      <td>${formatDate(entry.date)}</td>
+      <td>${entry.description}</td>
+      <td>${entry.category}</td>
+      <td><span class="badge expense">${entry.payer}</span></td>
+      <td class="money expense">${money(entry.value)}</td>
+      <td>${entry.note || '-'}</td>
+      <td>
         <div class="row-actions">
           <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
           <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
+        </div>
+      </td>
+    </tr>
+    <tr class="mobile-row">
+      <td colspan="7">
+        <div class="mobile-record">
+          <div class="mobile-record-top">
+            <span class="mobile-title">${entry.description}</span>
+            <span class="money expense">${money(entry.value)}</span>
+          </div>
+          <div class="mobile-record-bottom">
+            <span>${formatDate(entry.date)}</span>
+            <span>${entry.category}</span>
+            <span><span class="badge expense">${entry.payer}</span></span>
+            <div class="row-actions compact">
+              <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
+              <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
