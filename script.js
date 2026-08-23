@@ -326,7 +326,7 @@ function renderOutsideTable() {
     .slice()
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .map((item) => `
-      <tr>
+      <tr class="desktop-row">
         <td>${formatDate(item.date)}</td>
         <td><span class="badge expense">${item.from}</span></td>
         <td><span class="badge income">${item.to}</span></td>
@@ -336,6 +336,25 @@ function renderOutsideTable() {
         <td>
           <div class="row-actions">
             <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${String(item.id)}">Excluir</button>
+          </div>
+        </td>
+      </tr>
+      <tr class="mobile-row">
+        <td colspan="7">
+          <div class="mobile-record">
+            <div class="mobile-record-top">
+              <span class="mobile-date">${formatDate(item.date)}</span>
+              <span class="mobile-title">${item.description}</span>
+              <span class="mobile-category">${item.from} → ${item.to}</span>
+            </div>
+            <div class="mobile-record-bottom">
+              <span class="badge expense">${item.from}</span>
+              <span class="money expense">${money(Number(item.value || 0))}</span>
+              <span class="mobile-note">${item.note || 'Sem obs.'}</span>
+              <div class="row-actions compact">
+                <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${String(item.id)}">Excluir</button>
+              </div>
+            </div>
           </div>
         </td>
       </tr>
@@ -352,7 +371,7 @@ function renderTable() {
   }
 
   tableBody.innerHTML = entries.map((entry) => `
-    <tr>
+    <tr class="desktop-row">
       <td>${formatDate(entry.date)}</td>
       <td>${entry.description}</td>
       <td>${entry.category}</td>
@@ -363,6 +382,26 @@ function renderTable() {
         <div class="row-actions">
           <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
           <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
+        </div>
+      </td>
+    </tr>
+    <tr class="mobile-row">
+      <td colspan="7">
+        <div class="mobile-record">
+          <div class="mobile-record-top">
+            <span class="mobile-date">${formatDate(entry.date)}</span>
+            <span class="mobile-title">${entry.description}</span>
+            <span class="mobile-category">${entry.category}</span>
+          </div>
+          <div class="mobile-record-bottom">
+            <span class="badge expense">${entry.payer}</span>
+            <span class="money expense">${money(entry.value)}</span>
+            <span class="mobile-note">${entry.note || 'Sem obs.'}</span>
+            <div class="row-actions compact">
+              <button class="icon-btn" type="button" data-action="edit" data-id="${entry.id}">Editar</button>
+              <button class="icon-btn delete" type="button" data-action="delete" data-id="${entry.id}">Excluir</button>
+            </div>
+          </div>
         </div>
       </td>
     </tr>
