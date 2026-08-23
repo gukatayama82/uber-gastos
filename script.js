@@ -3,6 +3,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_l4mOVtEA7jA91gRaqfdmng_tEXF88NM';
 const TABLE_NAME = 'dados';
 const OUTSIDE_KEY = 'controle-carros-fora-do-grupo-v1';
 const PEOPLE = ['Gu', 'PH', 'Patrício'];
+let supabase = null;
 
 const state = {
   records: [],
@@ -39,7 +40,37 @@ const outsideDescription = document.getElementById('outside-description');
 const outsideNote = document.getElementById('outside-note');
 const outsideCancelButton = document.getElementById('outside-cancel');
 
-const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+async function ensureSupabase() {
+  if (window.supabase && window.supabase.createClient) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+  }
+
+  const existingScript = document.querySelector('script[data-supabase-loader="true"]');
+  if (existingScript) {
+    await new Promise((resolve) => {
+      existingScript.addEventListener('load', resolve, { once: true });
+    });
+  } else {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.async = true;
+    script.dataset.supabaseLoader = 'true';
+    document.head.appendChild(script);
+
+    await new Promise((resolve, reject) => {
+      script.addEventListener('load', resolve, { once: true });
+      script.addEventListener('error', () => reject(new Error('Falha ao carregar o client do Supabase')), { once: true });
+    });
+  }
+
+  if (window.supabase && window.supabase.createClient) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return true;
+  }
+
+  return false;
+}
 
 function showStatus(message, type = 'info') {
   let target = document.getElementById('status-message');
@@ -321,7 +352,8 @@ function fillForm(entry) {
 }
 
 async function loadRecords() {
-  if (!supabase) {
+  const ready = await ensureSupabase();
+  if (!ready || !supabase) {
     showStatus('Configure SUPABASE_URL e SUPABASE_ANON_KEY antes de usar o app.', 'error');
     return;
   }
