@@ -598,57 +598,47 @@ th {
 
   .mobile-record-top,
   .mobile-record-bottom {
-    display: flex;
+    display: grid;
+    gap: 6px 8px;
     align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
   }
 
   .mobile-record-top {
-    justify-content: flex-start;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     font-size: 10px;
     color: var(--muted);
   }
 
   .mobile-record-bottom {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
     color: var(--muted);
     font-size: 10.5px;
-    justify-content: flex-start;
   }
 
-  .mobile-date {
+  .mobile-date,
+  .mobile-category {
     color: var(--muted);
     font-weight: 600;
     white-space: nowrap;
-    flex: 0 0 auto;
   }
 
   .mobile-title {
     font-weight: 700;
     color: var(--text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 46%;
-  }
-
-  .mobile-category {
-    color: var(--muted);
-    font-size: 10px;
-    margin-left: auto;
-    text-align: right;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .mobile-note {
     color: var(--muted);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 30%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .mobile-record-bottom .row-actions.compact {
-    margin-left: auto;
+    justify-self: end;
   }
 
   .row-actions {
