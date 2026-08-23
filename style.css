@@ -437,19 +437,30 @@ th {
 
 @media (max-width: 640px) {
   body {
-    min-width: 320px;
+    min-width: 0;
+    font-size: 14px;
   }
 
   .main-content {
-    padding: 16px 14px 24px;
+    padding: 14px 12px 20px;
   }
 
   .sidebar {
-    padding: 18px 14px;
+    padding: 16px 12px 14px;
   }
 
   .brand {
     margin-bottom: 18px;
+  }
+
+  .brand-mark {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .brand h1 {
+    font-size: 1.1rem;
   }
 
   .nav {
@@ -458,7 +469,7 @@ th {
 
   .nav-item {
     text-align: center;
-    padding: 10px 12px;
+    padding: 10px 8px;
   }
 
   .summary-grid,
@@ -473,7 +484,11 @@ th {
   .summary-card,
   .person-card,
   .panel {
-    padding: 16px 14px;
+    padding: 14px 12px;
+  }
+
+  .summary-card strong {
+    font-size: 1.2rem;
   }
 
   .topbar,
@@ -487,9 +502,15 @@ th {
   }
 
   .topbar h2 {
-    font-size: 1.35rem;
+    font-size: 1.2rem;
   }
 
+  .filters {
+    width: 100%;
+  }
+
+  .filters input,
+  .filters select,
   .ghost,
   .primary,
   .secondary {
@@ -507,13 +528,13 @@ th {
   }
 
   table {
-    min-width: 620px;
+    min-width: 500px;
   }
 
   th,
   td {
-    padding: 10px 8px;
-    font-size: 12px;
+    padding: 8px 6px;
+    font-size: 11px;
   }
 
   .row-actions {
@@ -523,5 +544,28 @@ th {
 
   .icon-btn {
     width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  .main-content {
+    padding-inline: 10px;
+  }
+
+  .nav {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar h2 {
+    font-size: 1.05rem;
+  }
+
+  .summary-card strong {
+    font-size: 1.1rem;
+  }
+
+  .person-card p,
+  .person-card strong {
+    font-size: 0.9rem;
   }
 }
