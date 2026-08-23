@@ -40,35 +40,18 @@ const outsideDescription = document.getElementById('outside-description');
 const outsideNote = document.getElementById('outside-note');
 const outsideCancelButton = document.getElementById('outside-cancel');
 
+function safeBind(element, eventName, handler) {
+  if (!element) return;
+  element.addEventListener(eventName, handler);
+}
+
 async function ensureSupabase() {
-  if (window.supabase && window.supabase.createClient) {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     return true;
   }
 
-  const existingScript = document.querySelector('script[data-supabase-loader="true"]');
-  if (existingScript) {
-    await new Promise((resolve) => {
-      existingScript.addEventListener('load', resolve, { once: true });
-    });
-  } else {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-    script.async = true;
-    script.dataset.supabaseLoader = 'true';
-    document.head.appendChild(script);
-
-    await new Promise((resolve, reject) => {
-      script.addEventListener('load', resolve, { once: true });
-      script.addEventListener('error', () => reject(new Error('Falha ao carregar o client do Supabase')), { once: true });
-    });
-  }
-
-  if (window.supabase && window.supabase.createClient) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return true;
-  }
-
+  console.error('Supabase client não carregou no navegador. Verifique se a página está em HTTP e se o script CDN foi incluído antes do app.');
   return false;
 }
 
@@ -501,28 +484,42 @@ function render() {
   renderOutsideTable();
 }
 
-form.addEventListener('submit', handleSubmit);
-outsideForm.addEventListener('submit', handleOutsideSubmit);
-tableBody.addEventListener('click', handleTableClick);
-outsideTableBody.addEventListener('click', (event) => {
-  const button = event.target.closest('button[data-outside-action]');
-  if (!button) return;
+function initializeApp() {
+  safeBind(form, 'submit', handleSubmit);
+  safeBind(outsideForm, 'submit', handleOutsideSubmit);
+  safeBind(tableBody, 'click', handleTableClick);
+  safeBind(outsideTableBody, 'click', (event) => {
+    const button = event.target.closest('button[data-outside-action]');
+    if (!button) return;
 
-  const { id } = button.dataset;
-  state.outside = state.outside.filter((item) => String(item.id) !== String(id));
-  persistOutside();
+    const { id } = button.dataset;
+    state.outside = state.outside.filter((item) => String(item.id) !== String(id));
+    persistOutside();
+    render();
+  });
+  safeBind(searchInput, 'input', handleFilters);
+  safeBind(payerFilter, 'change', handleFilters);
+  safeBind(monthFilter, 'change', handleFilters);
+  safeBind(cancelEditButton, 'click', resetForm);
+  safeBind(outsideCancelButton, 'click', resetOutsideForm);
+
+  if (inputDate) inputDate.value = new Date().toISOString().slice(0, 10);
+  if (outsideDate) outsideDate.value = new Date().toISOString().slice(0, 10);
+  if (inputPayer) inputPayer.value = 'Gu';
+  if (outsideFrom) outsideFrom.value = 'Gu';
+  if (outsideTo) outsideTo.value = 'PH';
+
   render();
-});
-searchInput.addEventListener('input', handleFilters);
-payerFilter.addEventListener('change', handleFilters);
-monthFilter.addEventListener('change', handleFilters);
-cancelEditButton.addEventListener('click', resetForm);
-outsideCancelButton.addEventListener('click', resetOutsideForm);
+  loadRecords();
+}
 
-inputDate.value = new Date().toISOString().slice(0, 10);
-outsideDate.value = new Date().toISOString().slice(0, 10);
-inputPayer.value = 'Gu';
-outsideFrom.value = 'Gu';
-outsideTo.value = 'PH';
-render();
-loadRecords();
+window.ensureSupabase = ensureSupabase;
+window.loadRecords = loadRecords;
+window.handleSubmit = handleSubmit;
+window.render = render;
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+} else {
+  initializeApp();
+}
