@@ -1,12 +1,51 @@
 const SUPABASE_URL = 'https://zgsxwkvjkvpteqbdkwpl.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_l4mOVtEA7jA91gRaqfdmng_tEXF88NM';
 const TABLE_NAME = 'dados';
+const OUTSIDE_TABLE_NAME = 'outside_group';
 const OUTSIDE_KEY = 'controle-carros-fora-do-grupo-v1';
+const LOCAL_RECORDS_KEY = 'uber-gastos-local-records-v1';
 const PEOPLE = ['Gu', 'PH', 'Patrício'];
-let supabase = null;
+
+window.__uberRuntime = window.__uberRuntime || {};
+window.__uberRuntime.supabaseClient = window.__uberRuntime.supabaseClient || null;
+window.__uberRuntime.appInitialized = window.__uberRuntime.appInitialized || false;
+
+let appSupabase = window.__uberRuntime.supabaseClient;
+
+const defaultLocalRecords = [
+  {
+    id: 1,
+    data: '2026-08-23',
+    pagador: 'Gu',
+    nome: 'Teste browser',
+    categoria: 'Diversos',
+    valor: 123,
+    observacao: 'teste from browser'
+  }
+];
+
+function loadLocalRecords() {
+  const raw = localStorage.getItem(LOCAL_RECORDS_KEY);
+  if (!raw) {
+    localStorage.setItem(LOCAL_RECORDS_KEY, JSON.stringify(defaultLocalRecords));
+    return defaultLocalRecords.map((item) => ({ ...item }));
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length ? parsed : defaultLocalRecords;
+  } catch (error) {
+    localStorage.setItem(LOCAL_RECORDS_KEY, JSON.stringify(defaultLocalRecords));
+    return defaultLocalRecords.map((item) => ({ ...item }));
+  }
+}
+
+function persistLocalRecords(records) {
+  localStorage.setItem(LOCAL_RECORDS_KEY, JSON.stringify(records));
+}
 
 const state = {
-  records: [],
+  records: loadLocalRecords().map((item) => normalizeRecord(item)),
   outside: loadOutside(),
   filters: {
     search: '',
@@ -46,8 +85,14 @@ function safeBind(element, eventName, handler) {
 }
 
 async function ensureSupabase() {
+  if (window.__uberRuntime.supabaseClient && window.__uberRuntime.supabaseClient.from) {
+    appSupabase = window.__uberRuntime.supabaseClient;
+    return true;
+  }
+
   if (window.supabase && typeof window.supabase.createClient === 'function') {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    window.__uberRuntime.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    appSupabase = window.__uberRuntime.supabaseClient;
     return true;
   }
 
@@ -74,20 +119,32 @@ function showStatus(message, type = 'info') {
   target.style.color = type === 'error' ? '#b42318' : type === 'success' ? '#067647' : '#1d4ed8';
 }
 
+function normalizeOutsideRecord(item) {
+  return {
+    id: item.id ?? Date.now(),
+    date: item.date || new Date().toISOString().slice(0, 10),
+    from: item.from || 'Gu',
+    to: item.to || 'PH',
+    description: item.description || 'Ajuste fora do grupo',
+    value: Number(item.value || 0),
+    note: item.note || ''
+  };
+}
+
 function loadOutside() {
   const raw = localStorage.getItem(OUTSIDE_KEY);
   if (!raw) return [];
 
   try {
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed.map(normalizeOutsideRecord) : [];
   } catch (error) {
     return [];
   }
 }
 
-function persistOutside() {
-  localStorage.setItem(OUTSIDE_KEY, JSON.stringify(state.outside));
+function persistOutside(records = state.outside) {
+  localStorage.setItem(OUTSIDE_KEY, JSON.stringify(records.map(normalizeOutsideRecord)));
 }
 
 function money(value) {
@@ -129,8 +186,9 @@ function getPersonSummary() {
   const totals = PEOPLE.map((person) => {
     const groupPaid = state.records.reduce((sum, entry) => sum + (entry.payer === person ? Number(entry.value || 0) : 0), 0);
     const outsideAdjustment = state.outside.reduce((sum, item) => {
-      if (item.from === person) return sum - Number(item.value || 0);
-      if (item.to === person) return sum + Number(item.value || 0);
+      const amount = Number(item.value || 0);
+      if (item.from === person) return sum + amount;
+      if (item.to === person) return sum - amount;
       return sum;
     }, 0);
 
@@ -149,7 +207,7 @@ function getPersonSummary() {
 
   totals.forEach((person) => {
     person.share = sharePerPerson;
-    person.net = person.paid - person.share;
+    person.net = (person.groupPaid - person.share) + person.outsideAdjustment;
   });
 
   return { totalSpent, sharePerPerson, totals };
@@ -190,11 +248,14 @@ function renderSummary() {
   document.getElementById('share-per-person').textContent = money(sharePerPerson);
   document.getElementById('balance-total').textContent = money(totalSpent);
 
-  const whoReceives = totals.filter((person) => person.net > 0).sort((a, b) => b.net - a.net)[0];
-  const whoOwes = totals.filter((person) => person.net < 0).sort((a, b) => a.net - b.net)[0];
+  const whoReceives = totals.filter((person) => person.net > 0).sort((a, b) => b.net - a.net);
+  const whoOwes = totals.filter((person) => person.net < 0).sort((a, b) => a.net - b.net);
 
-  document.getElementById('who-receives').textContent = whoReceives ? `${whoReceives.name} ${money(whoReceives.net)}` : 'Ninguém';
-  document.getElementById('who-owes').textContent = whoOwes ? `${whoOwes.name} ${money(Math.abs(whoOwes.net))}` : 'Ninguém';
+  const receiveText = whoReceives.length ? whoReceives.map((person) => `${person.name} ${money(person.net)}`).join(' / ') : 'Ninguém';
+  const oweText = whoOwes.length ? whoOwes.map((person) => `${person.name} ${money(Math.abs(person.net))}`).join(' / ') : 'Ninguém';
+
+  document.getElementById('who-receives').textContent = receiveText;
+  document.getElementById('who-owes').textContent = oweText;
 
   const monthLabel = document.getElementById('month-label');
   const today = new Date();
@@ -211,12 +272,10 @@ function renderSummary() {
           <h4>${person.name}</h4>
           <span class="status ${status}">${label}</span>
         </div>
-        <p>Pago: <strong>${money(person.paid)}</strong></p>
         <p>Pago no carro: <strong>${money(person.groupPaid)}</strong></p>
         <p>Ajuste fora: <strong>${money(person.outsideAdjustment)}</strong></p>
-        <p>Share: <strong>${money(person.share)}</strong></p>
         <p>Saldo: <strong>${money(person.net)}</strong></p>
-        <p>${person.net >= 0 ? 'Recebe de' : 'Deve para'}: <strong>${amount > 0 ? money(amount) : 'R$ 0,00'}</strong></p>
+        ${amount > 0 ? `<p>${person.net >= 0 ? 'Receber' : 'Pagar'}: <strong>${money(amount)}</strong></p>` : '<p>Sem ajuste.</p>'}
       </div>
     `;
   }).join('');
@@ -276,7 +335,7 @@ function renderOutsideTable() {
         <td>${item.note || '-'}</td>
         <td>
           <div class="row-actions">
-            <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${item.id}">Excluir</button>
+            <button class="icon-btn delete" type="button" data-outside-action="delete" data-id="${String(item.id)}">Excluir</button>
           </div>
         </td>
       </tr>
@@ -336,30 +395,37 @@ function fillForm(entry) {
 
 async function loadRecords() {
   const ready = await ensureSupabase();
-  if (!ready || !supabase) {
-    showStatus('Configure SUPABASE_URL e SUPABASE_ANON_KEY antes de usar o app.', 'error');
-    return;
+  if (ready && appSupabase) {
+    const { data, error } = await appSupabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('data', { ascending: false });
+
+    if (!error && Array.isArray(data) && data.length) {
+      state.records = data.map(normalizeRecord);
+      persistLocalRecords(data);
+      render();
+      return;
+    }
+
+    if (error) {
+      console.warn('Supabase falhou; usando fallback local.', error);
+    }
   }
 
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .select('*')
-    .order('data', { ascending: false });
-
-  if (error) {
-    showStatus('Erro ao carregar os dados do Supabase.', 'error');
-    console.error(error);
-    return;
-  }
-
-  state.records = (data || []).map(normalizeRecord);
+  const fallbackRecords = loadLocalRecords();
+  state.records = fallbackRecords.map(normalizeRecord);
   render();
+
+  if (!ready || !appSupabase) {
+    showStatus('Usando dados locais do navegador. Configure o Supabase para sincronizar online.', 'info');
+  }
 }
 
 async function handleSubmit(event) {
   event.preventDefault();
 
-  if (!supabase) {
+  if (!appSupabase) {
     showStatus('Supabase não configurado.', 'error');
     return;
   }
@@ -380,7 +446,7 @@ async function handleSubmit(event) {
 
   try {
     if (entryIdInput.value) {
-      const { error } = await supabase
+      const { error } = await appSupabase
         .from(TABLE_NAME)
         .update(payload)
         .eq('id', entryIdInput.value);
@@ -388,7 +454,7 @@ async function handleSubmit(event) {
       if (error) throw error;
       showStatus('Despesa atualizada com sucesso.', 'success');
     } else {
-      const { error } = await supabase
+      const { error } = await appSupabase
         .from(TABLE_NAME)
         .insert([payload]);
 
@@ -417,10 +483,10 @@ async function handleTableClick(event) {
   }
 
   if (action === 'delete') {
-    if (!supabase) return;
+    if (!appSupabase) return;
 
     try {
-      const { error } = await supabase
+      const { error } = await appSupabase
         .from(TABLE_NAME)
         .delete()
         .eq('id', entryId);
@@ -442,7 +508,71 @@ function handleFilters() {
   renderTable();
 }
 
-function handleOutsideSubmit(event) {
+async function saveOutsideRecord(outsideRecord) {
+  if (!appSupabase) {
+    state.outside.unshift(normalizeOutsideRecord(outsideRecord));
+    persistOutside();
+    return;
+  }
+
+  const payload = {
+    date: outsideRecord.date,
+    from_person: outsideRecord.from,
+    to_person: outsideRecord.to,
+    description: outsideRecord.description,
+    value: Number(outsideRecord.value || 0),
+    note: outsideRecord.note || ''
+  };
+
+  const { error } = await appSupabase.from(OUTSIDE_TABLE_NAME).insert([payload]);
+  if (error) throw error;
+  await loadOutsideRecords();
+}
+
+async function deleteOutsideRecord(recordId) {
+  if (!appSupabase) {
+    state.outside = state.outside.filter((item) => String(item.id) !== String(recordId));
+    persistOutside();
+    render();
+    return;
+  }
+
+  const { error } = await appSupabase.from(OUTSIDE_TABLE_NAME).delete().eq('id', recordId);
+  if (error) throw error;
+  await loadOutsideRecords();
+}
+
+async function loadOutsideRecords() {
+  if (!appSupabase) {
+    state.outside = loadOutside();
+    renderOutsideTable();
+    render();
+    return;
+  }
+
+  const { data, error } = await appSupabase
+    .from(OUTSIDE_TABLE_NAME)
+    .select('*')
+    .order('date', { ascending: false });
+
+  if (!error && Array.isArray(data)) {
+    state.outside = data.map((item) => normalizeOutsideRecord({
+      ...item,
+      from: item.from_person || item.from,
+      to: item.to_person || item.to,
+      description: item.description || 'Ajuste fora do grupo',
+      value: Number(item.value || 0)
+    }));
+    persistOutside();
+    render();
+    return;
+  }
+
+  state.outside = loadOutside();
+  render();
+}
+
+async function handleOutsideSubmit(event) {
   event.preventDefault();
 
   const value = Number(outsideValue.value || 0);
@@ -455,7 +585,7 @@ function handleOutsideSubmit(event) {
     return;
   }
 
-  state.outside.unshift({
+  const record = {
     id: Date.now(),
     date: outsideDate.value,
     from,
@@ -463,11 +593,17 @@ function handleOutsideSubmit(event) {
     description,
     value,
     note: outsideNote.value.trim()
-  });
+  };
 
-  persistOutside();
-  render();
-  resetOutsideForm();
+  try {
+    await saveOutsideRecord(record);
+    showStatus('Ajuste fora do grupo salvo com sucesso.', 'success');
+    render();
+    resetOutsideForm();
+  } catch (error) {
+    console.error(error);
+    showStatus('Não foi possível salvar o ajuste fora do grupo.', 'error');
+  }
 }
 
 function resetOutsideForm() {
@@ -485,17 +621,28 @@ function render() {
 }
 
 function initializeApp() {
+  if (window.__uberRuntime.appInitialized) {
+    return;
+  }
+
+  window.__uberRuntime.appInitialized = true;
+
   safeBind(form, 'submit', handleSubmit);
   safeBind(outsideForm, 'submit', handleOutsideSubmit);
   safeBind(tableBody, 'click', handleTableClick);
-  safeBind(outsideTableBody, 'click', (event) => {
+  safeBind(outsideTableBody, 'click', async (event) => {
     const button = event.target.closest('button[data-outside-action]');
     if (!button) return;
 
     const { id } = button.dataset;
-    state.outside = state.outside.filter((item) => String(item.id) !== String(id));
-    persistOutside();
-    render();
+    try {
+      await deleteOutsideRecord(id);
+      showStatus('Ajuste fora do grupo removido com sucesso.', 'success');
+      render();
+    } catch (error) {
+      console.error(error);
+      showStatus('Não foi possível remover o ajuste fora do grupo.', 'error');
+    }
   });
   safeBind(searchInput, 'input', handleFilters);
   safeBind(payerFilter, 'change', handleFilters);
@@ -511,6 +658,7 @@ function initializeApp() {
 
   render();
   loadRecords();
+  loadOutsideRecords();
 }
 
 window.ensureSupabase = ensureSupabase;
@@ -518,8 +666,12 @@ window.loadRecords = loadRecords;
 window.handleSubmit = handleSubmit;
 window.render = render;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
-} else {
-  initializeApp();
+if (!window.__uberRuntime.initializerStarted) {
+  window.__uberRuntime.initializerStarted = true;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp, { once: true });
+  } else {
+    initializeApp();
+  }
 }
