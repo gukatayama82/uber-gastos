@@ -1,0 +1,18 @@
+[
+  { "id": 1, "date": "2026-05-01", "description": "Frete / Guincho", "category": "Logística", "payer": "PH", "value": 1900, "note": "Gasto compartilhado" },
+  { "id": 2, "date": "2026-05-02", "description": "Tramitação / Logística", "category": "Logística", "payer": "PH", "value": 1300, "note": "Documentação e transporte" },
+  { "id": 3, "date": "2026-05-03", "description": "Oficina", "category": "Manutenção", "payer": "Gu", "value": 5000, "note": "Reparo geral" },
+  { "id": 4, "date": "2026-05-03", "description": "Oficina", "category": "Manutenção", "payer": "PH", "value": 2000, "note": "Reparo geral" },
+  { "id": 5, "date": "2026-05-03", "description": "Oficina", "category": "Manutenção", "payer": "Patrício", "value": 3000, "note": "Reparo geral" },
+  { "id": 6, "date": "2026-05-04", "description": "Bateria", "category": "Elétrica", "payer": "Patrício", "value": 800, "note": "Troca de bateria" },
+  { "id": 7, "date": "2026-05-05", "description": "Rastreador", "category": "Acessório", "payer": "PH", "value": 160, "note": "Equipamento" },
+  { "id": 8, "date": "2026-05-06", "description": "TBI", "category": "Acessório", "payer": "Patrício", "value": 280, "note": "Dispositivo" },
+  { "id": 9, "date": "2026-05-07", "description": "Seguro", "category": "Seguro", "payer": "PH", "value": 360, "note": "Cobertura" },
+  { "id": 10, "date": "2026-05-08", "description": "Uber", "category": "Transporte", "payer": "PH", "value": 60, "note": "Deslocamento" },
+  { "id": 11, "date": "2026-05-09", "description": "Documentação", "category": "Documentação", "payer": "PH", "value": 892, "note": "Trâmites" },
+  { "id": 12, "date": "2026-05-10", "description": "Últimos itens (2k já enviado)", "category": "Diversos", "payer": "Patrício", "value": 2000, "note": "Itens finais" },
+  { "id": 13, "date": "2026-05-11", "description": "Últimos itens restantes", "category": "Diversos", "payer": "PH", "value": 1377.29, "note": "Saldo restante" },
+  { "id": 14, "date": "2026-05-12", "description": "Seguro", "category": "Seguro", "payer": "Patrício", "value": 316.17, "note": "Cobertura extra" },
+  { "id": 15, "date": "2026-05-13", "description": "Correia", "category": "Manutenção", "payer": "PH", "value": 229.9, "note": "Peça" },
+  { "id": 16, "date": "2026-05-14", "description": "Silvio Mecânico", "category": "Mecânica", "payer": "Gu", "value": 1700, "note": "Serviço de mecânico" }
+]

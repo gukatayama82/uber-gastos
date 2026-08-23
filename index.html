@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Controle de Gastos</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div>
+          <div class="brand">
+            <span class="brand-mark">3</span>
+            <div>
+              <h1>Carros</h1>
+              <small>Gu / PH / Patrício</small>
+            </div>
+          </div>
+
+          <nav class="nav">
+            <button class="nav-item active" type="button">Resumo</button>
+            <button class="nav-item" type="button">Despesas</button>
+          </nav>
+        </div>
+
+        <div class="sidebar-card">
+          <p>Total do grupo</p>
+          <h3 id="balance-total">R$ 0,00</h3>
+          <small id="month-label">Mês atual</small>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h2>Controle de gastos dos carros</h2>
+          </div>
+          <div class="actions">
+            <button class="ghost" id="export-json" type="button">Exportar JSON</button>
+            <label class="ghost file-button" for="import-json">Importar JSON</label>
+            <input id="import-json" type="file" accept="application/json" hidden />
+          </div>
+        </header>
+
+        <section class="summary-grid">
+          <article class="summary-card expense">
+            <span>Total gasto</span>
+            <strong id="total-expense">R$ 0,00</strong>
+          </article>
+          <article class="summary-card balance">
+            <span>Valor por pessoa</span>
+            <strong id="share-per-person">R$ 0,00</strong>
+          </article>
+          <article class="summary-card income">
+            <span>Quem recebe</span>
+            <strong id="who-receives">-</strong>
+          </article>
+          <article class="summary-card average">
+            <span>Quem deve</span>
+            <strong id="who-owes">-</strong>
+          </article>
+        </section>
+
+        <section class="panel people-panel">
+          <div class="panel-header">
+            <h3>Resumo por pessoa</h3>
+          </div>
+          <div id="people-summary" class="people-summary"></div>
+        </section>
+
+        <section class="panel-grid">
+          <article class="panel form-panel">
+            <div class="panel-header">
+              <h3>Nova despesa</h3>
+            </div>
+
+            <form id="entry-form">
+              <input type="hidden" id="entry-id" />
+
+              <div class="field-grid two-col">
+                <label>
+                  <span>Data</span>
+                  <input id="date" type="date" required />
+                </label>
+                <label>
+                  <span>Pago por</span>
+                  <select id="payer" required>
+                    <option value="Gu">Gu</option>
+                    <option value="PH">PH</option>
+                    <option value="Patrício">Patrício</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="field-grid two-col">
+                <label>
+                  <span>Descrição</span>
+                  <input id="description" type="text" maxlength="80" placeholder="Ex.: Revisão, combustível, imposto" required />
+                </label>
+                <label>
+                  <span>Categoria</span>
+                  <select id="category" required>
+                    <option value="">Selecione</option>
+                    <option value="Logística">Logística</option>
+                    <option value="Manutenção">Manutenção</option>
+                    <option value="Elétrica">Elétrica</option>
+                    <option value="Acessório">Acessório</option>
+                    <option value="Seguro">Seguro</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Documentação">Documentação</option>
+                    <option value="Diversos">Diversos</option>
+                    <option value="Mecânica">Mecânica</option>
+                    <option value="Combustível">Combustível</option>
+                    <option value="Revisão">Revisão</option>
+                    <option value="Tributos">Tributos</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="field-grid two-col">
+                <label>
+                  <span>Valor total</span>
+                  <input id="value" type="number" step="0.01" min="0" placeholder="0,00" required />
+                </label>
+                <label>
+                  <span>Observação</span>
+                  <input id="note" type="text" maxlength="120" placeholder="Opcional" />
+                </label>
+              </div>
+
+              <div class="field-grid single-col">
+                <small class="helper-text">Lançamento simples: escolha quem pagou e o valor total. O cálculo da liquidação é feito automaticamente.</small>
+              </div>
+
+              <div class="form-actions">
+                <button class="primary" type="submit">Salvar despesa</button>
+                <button class="secondary" id="cancel-edit" type="button">Cancelar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="panel dashboard-panel">
+            <div class="panel-header">
+              <h3>Gastos por categoria</h3>
+            </div>
+            <div id="category-list" class="category-list"></div>
+          </article>
+        </section>
+
+        <section class="panel outside-panel">
+          <div class="panel-header">
+            <h3>Controle fora do grupo</h3>
+          </div>
+
+          <form id="outside-form">
+            <div class="field-grid four-col">
+              <label>
+                <span>Data</span>
+                <input id="outside-date" type="date" required />
+              </label>
+              <label>
+                <span>Quem pagou</span>
+                <select id="outside-from" required>
+                  <option value="Gu">Gu</option>
+                  <option value="PH">PH</option>
+                  <option value="Patrício">Patrício</option>
+                </select>
+              </label>
+              <label>
+                <span>Para quem</span>
+                <select id="outside-to" required>
+                  <option value="Gu">Gu</option>
+                  <option value="PH">PH</option>
+                  <option value="Patrício">Patrício</option>
+                </select>
+              </label>
+              <label>
+                <span>Valor</span>
+                <input id="outside-value" type="number" step="0.01" min="0" placeholder="0,00" required />
+              </label>
+            </div>
+
+            <div class="field-grid two-col">
+              <label>
+                <span>Descrição</span>
+                <input id="outside-description" type="text" maxlength="80" placeholder="Ex.: Reembolso, ajuste, amigo" required />
+              </label>
+              <label>
+                <span>Observação</span>
+                <input id="outside-note" type="text" maxlength="120" placeholder="Opcional" />
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button class="primary" type="submit">Salvar ajuste fora</button>
+              <button class="secondary" id="outside-cancel" type="button">Limpar</button>
+            </div>
+          </form>
+
+          <div class="table-wrap small-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Quem pagou</th>
+                  <th>Para quem</th>
+                  <th>Descrição</th>
+                  <th>Valor</th>
+                  <th>Obs.</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="outside-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="panel-header table-header">
+            <h3>Lista de despesas</h3>
+            <div class="filters">
+              <input id="search" type="search" placeholder="Buscar descrição ou categoria" />
+              <select id="filter-payer">
+                <option value="all">Todos</option>
+                <option value="Gu">Gu</option>
+                <option value="PH">PH</option>
+                <option value="Patrício">Patrício</option>
+              </select>
+              <input id="filter-month" type="month" />
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Descrição</th>
+                  <th>Categoria</th>
+                  <th>Pago por</th>
+                  <th>Valor</th>
+                  <th>Obs.</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="entry-table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
